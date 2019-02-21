@@ -46,6 +46,18 @@ The compiler uses a specific syntax called migraine.
 It requires for all variables to be initialized at the top of the current depth level. Currently, only `byte` is supported.
 Support for double, float and int will come as soon as I can figure out some of the operations.
 
+Problematic loops from test_1.mico:
+```Python
+for(q=1:1:3){
+    for(p=1:1:2){
+        byte k
+        k=q+p
+        print(k)
+    }
+}
+```
+
+# Example
 Example code: (test_1.mico)
 
 ```Python
