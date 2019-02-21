@@ -23,9 +23,9 @@ This is the current devopment status:
 - == (equals)
 - -= (not equals)
 - <= (lower or equals)
-- 'greater symbol'= (greater or equals)
+- &#62;= (greater or equals)
 - < (lower)
-- 'greater symbol' (greater)
+- &#62; (greater)
 - &#35; (Comment - one line)
 - (...) (paranthesis)
 
