@@ -10,9 +10,9 @@ This is the current devopment status:
 - several operators
 
 # Operators:
-- + (addition)
-- - (subtraction)
-- * (multiplikation)
+- 'plus symbol' (addition)
+- 'minus symbol' (subtraction)
+- 'star symbol' (multiplikation)
 - ! (not)
 - && (logical and)
 - || (logical or)
@@ -23,9 +23,9 @@ This is the current devopment status:
 - == (equals)
 - -= (not equals)
 - <= (lower or equals)
-- >= (greater or equals)
+- 'greater symbol'= (greater or equals)
 - < (lower)
-- > (greater)
+- 'greater symbol' (greater)
 - 'hashtag' (Comment - one line)
 - (...) (paranthesis)
 
@@ -119,7 +119,7 @@ So next up will probably be a lot of fixes and a whole new compiler with improve
 Bear with me, as I am fairly new to Python and this is my first big project.
 
 ## Future....
-In the future, I plan to use this compiler to implement a more universally usable compiler. Also Whitespace and other esoteric programming languages interest me, so be prepared for more fun with uncommon languages
+In the future, I plan to use this compiler to implement a more universally usable compiler. Also Whitespace and other esoteric programming languages interest me, so be prepared for more fun with uncommon languages.
 But besides that, who knows what else is to come.
 
 
