@@ -3,7 +3,7 @@ A compiler from a selfmade programming syntax (migraine) to brainfuck.
 
 This is the current devopment status:
 
-#Currently implemented:
+# Currently implemented:
 - variables
 - variable modification
 - arithmetic calculations
@@ -26,7 +26,7 @@ This is the current devopment status:
 - >= (greater or equals)
 - < (lower)
 - > (greater)
-- # (hashtag) (Comment - one line)
+- 'hashtag' (Comment - one line)
 - (...) (paranthesis)
 
 Paranthesis are correctly evaluated
