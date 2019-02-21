@@ -10,9 +10,9 @@ This is the current devopment status:
 - several operators
 
 # Operators:
-- 'plus symbol' (addition)
-- 'minus symbol' (subtraction)
-- 'star symbol' (multiplikation)
+- &#43; (addition)
+- &#45; (subtraction)
+- &#42; (multiplikation)
 - ! (not)
 - && (logical and)
 - || (logical or)
@@ -26,7 +26,7 @@ This is the current devopment status:
 - 'greater symbol'= (greater or equals)
 - < (lower)
 - 'greater symbol' (greater)
-- 'hashtag' (Comment - one line)
+- &#35; (Comment - one line)
 - (...) (paranthesis)
 
 Paranthesis are correctly evaluated
