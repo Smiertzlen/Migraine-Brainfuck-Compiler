@@ -78,7 +78,7 @@ def make_tree(string):
         # lese den operator
         # ueberpruefe, ob ein doppeloperator vorliegt. Nachvoruebersetzung gibt es keine anderen außer den hier definierten
         # equal, lower/equal, greater/equal, unequal, or, and, nand, nor, xnor
-        if string[0:2] in ['==', '<=', '>=', '-=', '||', '&&', '-&', '-|', '-^']:
+        if string[0:2] in operator_brain:
             string_thesis.append(string[0:2])
             string = string[2:]
         else:
@@ -324,7 +324,8 @@ def recursive_search2(tree, substitutions):
             if not tree.get_left() == None:
                 tree.set_right(sub_tree.get_right())
                 sub_tree.get_left().set_parent(tree)
-                sub_tree.get_right().set_parent(tree)
+                if not sub_tree.get_right() == None:
+                    sub_tree.get_right().set_parent(tree)
         # kein Klammerausdruck. Der ausdruck der hier steht ist bereits fertig. Nichts tun
     else:
         recursive_search2(tree.get_left(), substitutions)
@@ -463,7 +464,10 @@ def compile(file, output, debug=False):
                     var_dic[current_depth].append((var_name, current_depth, current_location))
                     loc_dic[var_name] = current_location
 
-                    brain_str = create_number(int(exp[0])) + create_number(int(exp[1])) + create_number(int(exp[2]))
+                    #brain_str = create_number(int(exp[0])) + create_number(int(exp[1])) + create_number(int(exp[2]))
+                    brain_str = recursive_eval(make_tree_klammer(exp[0]), loc_dic, current_location)[0]
+                    brain_str += recursive_eval(make_tree_klammer(exp[1]), loc_dic, current_location+1)[0]
+                    brain_str += recursive_eval(make_tree_klammer(exp[2]), loc_dic, current_location+2)[0]
 
                     # check if the loop can be initialized. Therefore check if exp[0] <= exp[2]
                     # n p q |
@@ -524,7 +528,7 @@ def compile(file, output, debug=False):
 
                     # remove the variables from loc_dic
                     for elem in vars:
-                        loc_dic.pop(elem, None)
+                        loc_dic.pop(elem[0], None)
 
                     # now go backwarts to the position last[2]+1
                     # create the brainfuck code that deletes every variables until that point is reached
@@ -608,31 +612,41 @@ def compile(file, output, debug=False):
                         # clear the bit and recalculate it
 
                         # this may be optimized with the remove loop at the beginning
-                        brain_str = '<[-]'
+                        brain_str += '<[-]'
 
                         # n p q b
                         # 0 0 0 1
                         current_location -= 1
 
                         brain_str += copy_variable(current_location-3, current_location)
+                        current_location += 1
+                        brain_str += copy_variable(current_location-3, current_location)
+                        current_location += 1
+                        brain_str += operator_brain['+'][0]
+                        current_location -= 1
                         brain_str += copy_variable(current_location-2, current_location)
+                        current_location += 1
                         brain_str += operator_brain['<='][0]
+                        current_location -= 1
                         # n p q b |
 
                         brain_str += '<<<<[>>>>>>+<<<<<<-]>>>>>>[-<+<+<<<<+>>>>>>]'
+                        current_location += 2
                         # n p q b n n |
 
-                        # n+q q p n n+q |
+                        # n+p p q b n n+q |
                         brain_str += '<<<<<[->>>>>+<<<<<]>>>>>[-<+<<<<+<+>>>>>>]'
                         brain_str += operator_brain['<='][0]
+                        current_location -= 1
                         brain_str += operator_brain['&&'][0]
+                        current_location -= 1
 
                         brain_str += '<]<[-]<[-]<[-]'
 
-                        current_location -= 3
+                        current_location -= 4
                         current_depth -= 1
 
-                        loc_dic.pop(last[1])
+                        loc_dic.pop(last[1], None)
                         # remove the variable from the current_depth var dic
                         var_dic[current_depth] = [v for v in var_dic[current_depth] if not v == last[1]]
 
@@ -849,7 +863,7 @@ if __name__ == '__main__':
     #t = make_tree_klammer('(1+2)*3')
     #brain = recursive_eval(t, {}, 0)
     #print(brain)
-    compile('test_1.code', 'test_1.bf', True)
+    compile('test_cases_2.mico', 'test_1.bf', True)
     #t = make_tree_klammer('a*1==b')
     #t.pprint()
 
