@@ -4,12 +4,13 @@ operator_brain = {
     '+': ('<[-<+>]', -1),
     '-': ('<[-<->]', -1),
     '*': ('<<[->>+<<]>[->[->+<<<+>>]>[-<+>]<]>[-]<', -1),
-    '!': ('+<[[-]>-<]>[-<+>]', 0),  # to_invert|0 benötigt nur diese Bieden plätze für die Invetierung. Pointer auf 0
+    '!': ('+<[[-]>-<]>[-<+>]', 0),  # to_invert|0 benoetigt nur diese Bieden plaetze fuer die Invetierung. Pointer auf 0
     '&&': ('++<<[[-]>>-<<]+>[[-]>-<]>[[-]<<->>]<', -1),
     '-&': ('++<<[[-]>>-<<]+>[[-]>-<]>[[-]<<->>]<+<[[-]>-<]>[-<+>]', -1), # kombi: x y and not !(x&&y)
     '||': ('<<[[-]>>+<<]>[[-]>+<]>[[-]<<+>>]<', -1),
     '-|': ('<<[[-]>>+<<]>[[-]>+<]>[[-]<<+>>]<+<[[-]>-<]>[-<+>]', -1),
     '-^': ('<<[[-]>>+<<]+>[[-]>-<]>[[-]<<->>]<', -1), #xnor also true wenn beide true oder beide false
+    '^^': ('', -1)
     '==': ('<<[->-<]+>[[-]<->]', -1),
     '-=': ('<<[->-<]>[[-]<+>]', -1), # this means not equal
     '<=': ('>>+<<<<[>[->>+<<]>>[-<+<+>>]+<[[-]>-<]>[-<+>]<[-<+<[-]+>>>>-<<]<-<-]>>>>[-<<<<+>>>>]<<<[-]', -1),
@@ -23,7 +24,7 @@ operator_brain = {
 
 
 
-# Diese Klasse wird benötigt, um einen Ableitungsbaum für reguläre Ausdrücke zu erstellen
+# Diese Klasse wird benoetigt, um einen Ableitungsbaum fuer regulaere Ausdruecke zu erstellen
 class Node():
     def __init__(self, zeichen, l, r, p):
         self.own = zeichen
@@ -59,7 +60,7 @@ class Node():
         tree_pprint.pprint(self, 'own', 'left', 'right')
 
 
-# Diese Funktion bestimmt einen Ableitungsbaum für einen regulären Ausdruck, welcher keine Klammern enthält
+# Diese Funktion bestimmt einen Ableitungsbaum fuer einen regulaeren Ausdruck, welcher keine Klammern enthaelt
 # Insbesondere sind auch Variablenbestimmungen (gekennzeichnet durch $) erlaubt.
 def make_tree(string):
     # OPTIMIEREN!!!!!
@@ -72,10 +73,10 @@ def make_tree(string):
         checker += string[0]
         string = string[1:]
     string_thesis.append(checker)
-    # ab hier ist das nächste zeichen ein operator
+    # ab hier ist das naechste zeichen ein operator
     while string:
         # lese den operator
-        # Überprüfe, ob ein doppeloperator vorliegt. Nachvorübersetzung gibt es keine anderen außer den hier definierten
+        # ueberpruefe, ob ein doppeloperator vorliegt. Nachvoruebersetzung gibt es keine anderen außer den hier definierten
         # equal, lower/equal, greater/equal, unequal, or, and, nand, nor, xnor
         if string[0:2] in ['==', '<=', '>=', '-=', '||', '&&', '-&', '-|', '-^']:
             string_thesis.append(string[0:2])
@@ -84,7 +85,7 @@ def make_tree(string):
             string_thesis.append(string[0])
             string = string[1:]
         checker = ''
-        # lese den nächsten variablennamen
+        # lese den naechsten variablennamen
         while string and (string[0].isalnum() or string[0] in ['$', '!']):
             checker += string[0]
             string = string[1:]
@@ -100,11 +101,11 @@ def make_tree(string):
         # an dieser stelle ist der initiale neue Baum gesetzt.
         # setze als derzeitigen knoten tree
         current_node = tree
-        # mehr als nur eine simple variable. Füge den ersten Operator hinzu
+        # mehr als nur eine simple variable. Fuege den ersten Operator hinzu
 
         string_thesis = string_thesis[2:]
 
-        # bindungsstärke der operatoren nachlesen!
+        # bindungsstaerke der operatoren nachlesen!
         # Das hier kann auch als dictionary mit tiefen als abbildungen implementiert werden!
         #operators = '< > == <= >= + - * / %'
         operators = {
@@ -128,8 +129,8 @@ def make_tree(string):
         }
 
         while string_thesis:
-            # überprüfe die bindungsstärke des neuen un des markierten operators
-            # stärker bindender operator
+            # ueberpruefe die bindungsstaerke des neuen un des markierten operators
+            # staerker bindender operator
             # if operators.find(string_thesis[0]) > operators.find(current_node.get_op()):
             if operators[string_thesis[0]] > operators[current_node.get_op()]:
                 new_op = Node(string_thesis[0], current_node.get_right(), Node(string_thesis[1], None, None, None),
@@ -137,15 +138,15 @@ def make_tree(string):
                 new_op.get_right().set_parent(new_op)
                 current_node.set_right(new_op)
                 current_node = new_op
-            # schwächer bindender operator
+            # schwaecher bindender operator
             else:
                 new_op = Node(string_thesis[0], current_node, Node(string_thesis[1], None, None, None),
                               current_node.get_parent())
                 new_op.get_right().set_parent(new_op)
 
-                # an dieser stelle noch ungut...gucken was passiert wenn ich fälle im obersten knoten habe!
-                # in diesem fall stehen im übrigen vergleichsoperatoren
-                # diese haben die schwächste bindung, da diese erst ganz zum schluss ausgerechnet werden können
+                # an dieser stelle noch ungut...gucken was passiert wenn ich faelle im obersten knoten habe!
+                # in diesem fall stehen im uebrigen vergleichsoperatoren
+                # diese haben die schwaechste bindung, da diese erst ganz zum schluss ausgerechnet werden koennen
 
                 if not current_node.get_parent() == None:
                     current_node.get_parent().set_right(new_op)
@@ -156,7 +157,7 @@ def make_tree(string):
             string_thesis = string_thesis[2:]
 
 
-    # bevor der Baum zurückgegeben wird, muss er von ! befreit werden.
+    # bevor der Baum zurueckgegeben wird, muss er von ! befreit werden.
     # durchsuche also den Baum rekursiv und ersetze '!' durch entsprechende neue Knoten
 
     recusive_not(tree)
@@ -229,8 +230,8 @@ def entferne_klammern(string):
 
 
 # Diese funktion entfernt Klammern. Achtung! (a) wird nicht entfernt. Dies muss noch bearbeitet werden
-# Auch bei (a+b)+c dürfen die Klammern entfernt werden.
-# Optimierungen können noch implementiert werden
+# Auch bei (a+b)+c duerfen die Klammern entfernt werden.
+# Optimierungen koennen noch implementiert werden
 def entferne_klammern2(string):
     to_close = []
     liste = []
@@ -271,10 +272,10 @@ def entferne_klammern2(string):
 
 # Erstellt einen Ableitungsbaum mit Einhaltung der Klammerungsregeln
 def make_tree_klammer(string):
-    # ersetze die ersten Klammerausdrücke durch ein ;i für i als index innerhalb der substutitionsregel
+    # ersetze die ersten Klammerausdruecke durch ein ;i fuer i als index innerhalb der substutitionsregel
 
-    # sollte der string keinerlei klammern mehr enthalten, so führe direkt die make_tree funktion aus
-    # und gebe den so erzeugten Baum zurück
+    # sollte der string keinerlei klammern mehr enthalten, so fuehre direkt die make_tree funktion aus
+    # und gebe den so erzeugten Baum zurueck
     if '(' not in string:
         return make_tree(string)
     substitution = []
@@ -291,7 +292,7 @@ def make_tree_klammer(string):
                     depth += 1
                 if string[i] == ')':
                     depth -= 1
-            # an der stelle i befindet sich nun also die zugehörige klammer zu
+            # an der stelle i befindet sich nun also die zugehoerige klammer zu
             # substituiere den klammerausdruck
             to_check = to_check.replace(string[indexer:i + 1], '$' + str(index))
             substitution.append(string[indexer:i + 1])
@@ -300,7 +301,7 @@ def make_tree_klammer(string):
     # nun sind alle bereiche substituiert.
     # wende die baumfunktion auf den substituierten string an und wende diese funktion auf alle kinder an
     tree = make_tree(to_check)
-    # wende die substitutionen rückwärts an
+    # wende die substitutionen rueckwaerts an
     recursive_search2(tree, substitution)
 
     while not tree.get_parent() == None:
@@ -311,11 +312,11 @@ def make_tree_klammer(string):
 
 # def recursive_swap(tree, substitution)
 
-# Rekursive Suche nach noch nicht komplett ausgewerteten Ausdrücken
+# Rekursive Suche nach noch nicht komplett ausgewerteten Ausdruecken
 def recursive_search2(tree, substitutions):
     if tree.get_left() == None:
         # Blatt gefunden!
-        # überprüfe auf substutierten klammerausdruck. wenn ja dann den unterbaum erzeugen und einbinden
+        # ueberpruefe auf substutierten klammerausdruck. wenn ja dann den unterbaum erzeugen und einbinden
         if tree.get_op().startswith('$'):
             sub_tree = make_tree_klammer(substitutions[int(tree.get_op()[1:])][1:-1])
             tree.set_op(sub_tree.get_op())
@@ -332,18 +333,18 @@ def recursive_search2(tree, substitutions):
 
 
 def compile(file, output, debug=False):
-    # Diese Funktion kompiliert eine gültige code Datei zu einer bf Datei.
+    # Diese Funktion kompiliert eine gueltige code Datei zu einer bf Datei.
     # Zu implementieren:
     # + Variablenzuweisungen
-    # + Tiefen für Variablen
-    # - Löschen von Variablen mit zu hoher tiefenzuordnung, sobald sich die Tiefe verringert
-    # - auswerten von regulären Ausdrücken
+    # + Tiefen fuer Variablen
+    # - Loeschen von Variablen mit zu hoher tiefenzuordnung, sobald sich die Tiefe verringert
+    # - auswerten von regulaeren Ausdruecken
     # - Einordnung von while Schleifen
     # (- For schleifen)
     # + String ausgabe
     # + Variablen einlesen
     # + Ausgabe von Strings
-    # + Ausgabe von gemischten Strings print('Hallo ' + n + ' Welten') gibt aus für n=ord('4'): Hallo 4 Welten
+    # + Ausgabe von gemischten Strings print('Hallo ' + n + ' Welten') gibt aus fuer n=ord('4'): Hallo 4 Welten
 
     with open(file, 'r') as f:
         with open(output, 'w') as out:
@@ -380,7 +381,7 @@ def compile(file, output, debug=False):
                     read = f.readline()
                     continue
                 if read.startswith('while'):
-                    # hier muss überprüft werden, ob die bedingung überhaupt erfüllt ist. zudem muss die position
+                    # hier muss ueberprueft werden, ob die bedingung ueberhaupt erfuellt ist. zudem muss die position
                     # gespeichert werden
                     # Auswertung des sich in klammern befindlichen ausdrucks
                     #while(exp){
@@ -410,7 +411,7 @@ def compile(file, output, debug=False):
                     read = f.readline()
                     continue
                 if read.startswith('if'):
-                    # hier muss der nachfolgende ausdruck überprüft werden. Zudem kann ein else auftreten ('}' Fall)
+                    # hier muss der nachfolgende ausdruck ueberprueft werden. Zudem kann ein else auftreten ('}' Fall)
 
                     exp = read[3:-2]
                     #contains the expression of the if statement
@@ -443,8 +444,8 @@ def compile(file, output, debug=False):
                     read = f.readline()
                     continue
                 if read.startswith('for'):
-                    # in diesem fall muss noch implementiert werden, dass ein Zähler (welcher auch in der schleife
-                    # verfügbar sein muss gezählt wird.
+                    # in diesem fall muss noch implementiert werden, dass ein Zaehler (welcher auch in der schleife
+                    # verfuegbar sein muss gezaehlt wird.
 
                     # for a for loop to actually do something, there must be 3 things
                     # 1) if n=start:stepsize:end, n <= end or n >= end if stepsize < 0 must be obheld.
@@ -678,7 +679,7 @@ def compile(file, output, debug=False):
                 #if var_rep[0][-1] in '+-*/%':
                 #    var_rep = [var_rep[0][0:-1], var_rep[0][-1] + '=', var_rep[1]]
                 #else:
-                # der obige Fall von += etc wird nicht behandelt. In einer zukünftigen Variante kann dies implementiert
+                # der obige Fall von += etc wird nicht behandelt. In einer zukuenftigen Variante kann dies implementiert
                 # werden
 
 
@@ -690,7 +691,7 @@ def compile(file, output, debug=False):
                 # Rekursiv den Baum auswerten lassen
 
                 brain_code, current_location = recursive_eval(tree, loc_dic, current_location)
-                # die Variable rüberkopieren
+                # die Variable rueberkopieren
                 current_location -= 1
                 brain_code += '<' + copy_variable(current_location, loc_dic[var_rep[0]])
 
@@ -706,7 +707,7 @@ def compile(file, output, debug=False):
                 #print('Not implemented yet: variable manipulation')
 
 # kopiert die variable von x nach y.
-# hält auf dem nächsten feld rechts von der Kopierten variablen an bzw auf dem leer gewordenen Feld
+# haelt auf dem naechsten feld rechts von der Kopierten variablen an bzw auf dem leer gewordenen Feld
 def copy_variable(pos_x, pos_y):
     if pos_x < pos_y:
         shift = pos_y - pos_x
@@ -722,7 +723,7 @@ def copy_variable(pos_x, pos_y):
 # Hier ist noch etwas kaputt...
 # bei [1 2 6 0 0] gibt er 0 aus und der Speicher sieht aus: [1 2 6 6 0] mit zeiger auf der letzten 0
 def print_brain(str, pos, vars):
-    #spalte zunächst den String zwischen den korrekten + Zeichen auf
+    #spalte zunaechst den String zwischen den korrekten + Zeichen auf
     index = 0
     splitted = []
     while index < len(str):
@@ -733,7 +734,7 @@ def print_brain(str, pos, vars):
             while not str[index] == '"':
                 read += str[index]
                 index += 1
-            # kompletter String wurde gelesen. Das nächste Zeichen ist ein +
+            # kompletter String wurde gelesen. Das naechste Zeichen ist ein +
             index += 2
             splitted.append((read, 'str'))
         else:
@@ -745,7 +746,7 @@ def print_brain(str, pos, vars):
                 index += 1
             index += 1
 
-            # an dieser Stelle könnte man versuchen, formelverarbeitung einzubauen
+            # an dieser Stelle koennte man versuchen, formelverarbeitung einzubauen
 
             splitted.append((read, 'var'))
 
@@ -787,7 +788,7 @@ def create_number(n):
 # Diese funktion geht rekursiv den Baum durch mittels breitensuche
 # es werden entsprechende Variablen kopiert
 # das dictionary behandelt name und position der variablen
-# zurückgegeben wird ein zu schreibender String. Die folgende Position ist die Ursprüngliche+1
+# zurueckgegeben wird ein zu schreibender String. Die folgende Position ist die Urspruengliche+1
 def recursive_eval(tree, vars, pointer):
 
     # Anwendung auf einen inneren knoten
@@ -817,8 +818,8 @@ def recursive_eval(tree, vars, pointer):
 
 
 
-# Für die Schönere Berechnung: Man mehme die Wurzel int(x) der Zahl z. Dann berechnet man: y=z//x. Dies gibt die Anzahl der
-# Wiederholungen an. Danach noch entsprechend viele '+'*(z%x) um den Rest aufzufüllen
+# Fuer die Schoenere Berechnung: Man mehme die Wurzel int(x) der Zahl z. Dann berechnet man: y=z//x. Dies gibt die Anzahl der
+# Wiederholungen an. Danach noch entsprechend viele '+'*(z%x) um den Rest aufzufuellen
 
 
 
