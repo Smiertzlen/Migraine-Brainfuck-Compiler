@@ -3,6 +3,12 @@ A compiler from a selfmade programming syntax (migraine) to brainfuck.
 
 This is the current devopment status:
 
+# Current Tasks:
+- Complete rewrite of the code to enable a more widely usable code structure
+- Implementation of functions
+- Implementation of new assignment operator, which are working more efficiently (like a+=b directly adding to a instead of first calculating a+b and the assigning it to a)
+
+
 # Currently implemented:
 - variables
 - variable modification
